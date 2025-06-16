@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -19,10 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sebasdroid98.app2.ui.theme.App2Theme
@@ -51,6 +57,8 @@ fun MiSegundoComposable() {
 
     var colorFondo by remember { mutableStateOf( Color.White) }
 
+    var posicionTexto by remember { mutableStateOf(Offset(0f,0f)) }
+
     Box(modifier = Modifier.fillMaxSize().padding(16.dp).background(colorFondo)){
         Image(
             painter = painterResource(R.drawable.autoporche),
@@ -63,7 +71,15 @@ fun MiSegundoComposable() {
             fontSize = 24.sp,
             color = Color.Yellow,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.Center)
+            // modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.offset {
+                IntOffset(posicionTexto.x.toInt(), posicionTexto.y.toInt())
+            }.pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    posicionTexto += Offset(dragAmount.x, dragAmount.y)
+                }
+            }
         )
 
         // Botón en la parte superior izquierda
