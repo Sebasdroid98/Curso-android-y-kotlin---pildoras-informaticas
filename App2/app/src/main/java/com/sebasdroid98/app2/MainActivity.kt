@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -78,11 +80,13 @@ fun MiSegundoComposable() {
                 altoPantalla = coordinates.size.height.toFloat()
             }
     ){
-        Image(
+        /* Image(
             painter = painterResource(R.drawable.autoporche),
             contentDescription = "Auto Porche",
             modifier = Modifier.align(Alignment.Center).fillMaxSize()
-        )
+        ) */
+
+        imagenInteractiva()
 
         Text(
             text = "Vehiculo Porche",
@@ -141,6 +145,42 @@ fun MiSegundoComposable() {
 // Version 2 - Función para generar un color random
 fun colorAteatorio2(): Long{
     return (0xFFFFFF..0xFFFFFFFF).random()
+}
+
+@Composable
+fun imagenInteractiva() {
+
+    // Escala de la imagen
+    var escala by remember { mutableStateOf( 1f ) }
+
+    // Posición de la imagen
+    var posicion by remember { mutableStateOf(Offset(0f,0f)) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit){
+                detectTransformGestures{ _, desplazamiento, zoom, _ ->
+                    // Aplicar zoom
+                    escala *= zoom
+
+                    //Aplicar desplazamiento
+                    posicion += desplazamiento
+                }
+            },
+        contentAlignment = Alignment.Center
+    ){
+        Image(
+            painter = painterResource(R.drawable.autoporche),
+            contentDescription = "Auto Porche",
+            modifier = Modifier.graphicsLayer(
+                scaleX = escala.coerceIn(0.5f, 3f), // Limite zoom en X
+                scaleY = escala.coerceIn(0.5f, 3f), // Limite zoom en Y
+                translationX = posicion.x, // Desplazamiento horizontal
+                translationY = posicion.y // Desplazamiento vertical
+            )
+        )
+    }
 }
 
 @Composable
