@@ -156,17 +156,28 @@ fun imagenInteractiva() {
     // Posición de la imagen
     var posicion by remember { mutableStateOf(Offset(0f,0f)) }
 
+    // Rotación de la imagen
+    var rotacion by remember { mutableStateOf(0f) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit){
-                detectTransformGestures{ _, desplazamiento, zoom, _ ->
-                    // Aplicar zoom
-                    escala *= zoom
+                detectTransformGestures{ _, desplazamiento, zoom, anguloRotacion ->
 
-                    //Aplicar desplazamiento
-                    posicion += desplazamiento
+                    escala *= zoom // Aplica zoom
+                    posicion += desplazamiento // Aplica desplazamiento
+                    rotacion += anguloRotacion // Aplica rotación
+
                 }
+            }.pointerInput(Unit){
+                detectTapGestures(
+                    onDoubleTap = {
+                        escala = 1f // Reset de la escala
+                        posicion = Offset(0f,0f) // Reset de la posición
+                        rotacion = 0f // Reset de la rotación
+                    }
+                )
             },
         contentAlignment = Alignment.Center
     ){
@@ -177,7 +188,8 @@ fun imagenInteractiva() {
                 scaleX = escala.coerceIn(0.5f, 3f), // Limite zoom en X
                 scaleY = escala.coerceIn(0.5f, 3f), // Limite zoom en Y
                 translationX = posicion.x, // Desplazamiento horizontal
-                translationY = posicion.y // Desplazamiento vertical
+                translationY = posicion.y, // Desplazamiento vertical
+                rotationZ = rotacion // Rotación en el eje Z
             )
         )
     }
