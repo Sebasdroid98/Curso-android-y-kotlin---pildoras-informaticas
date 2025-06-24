@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -150,14 +154,15 @@ fun colorAteatorio2(): Long{
 @Composable
 fun imagenInteractiva() {
 
-    // Escala de la imagen
-    var escala by remember { mutableStateOf( 1f ) }
+    var escala by remember { mutableStateOf( 1f ) } // Escala de la imagen
+    var posicion by remember { mutableStateOf(Offset(0f,0f)) } // Posición de la imagen
+    var rotacion by remember { mutableStateOf(0f) } // Rotación de la imagen
 
-    // Posición de la imagen
-    var posicion by remember { mutableStateOf(Offset(0f,0f)) }
+    // Animaciones suaves hacia valores iniciales
 
-    // Rotación de la imagen
-    var rotacion by remember { mutableStateOf(0f) }
+    val escalaAnimada by animateFloatAsState(targetValue = escala, animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing))
+    val rotacionAnimada by animateFloatAsState(targetValue = rotacion, animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing))
+    val posicionAnimada by animateOffsetAsState(targetValue = posicion, animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing))
 
     Box(
         modifier = Modifier
@@ -185,11 +190,11 @@ fun imagenInteractiva() {
             painter = painterResource(R.drawable.autoporche),
             contentDescription = "Auto Porche",
             modifier = Modifier.graphicsLayer(
-                scaleX = escala.coerceIn(0.5f, 3f), // Limite zoom en X
-                scaleY = escala.coerceIn(0.5f, 3f), // Limite zoom en Y
-                translationX = posicion.x, // Desplazamiento horizontal
-                translationY = posicion.y, // Desplazamiento vertical
-                rotationZ = rotacion // Rotación en el eje Z
+                scaleX = escalaAnimada.coerceIn(0.5f, 3f), // Limite zoom en X
+                scaleY = escalaAnimada.coerceIn(0.5f, 3f), // Limite zoom en Y
+                translationX = posicionAnimada.x, // Desplazamiento horizontal
+                translationY = posicionAnimada.y, // Desplazamiento vertical
+                rotationZ = rotacionAnimada // Rotación en el eje Z
             )
         )
     }
