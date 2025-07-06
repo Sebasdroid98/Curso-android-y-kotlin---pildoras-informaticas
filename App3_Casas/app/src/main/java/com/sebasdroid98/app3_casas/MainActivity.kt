@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.sebasdroid98.app3_casas.ui.pantallas.PantallaInicio
 import com.sebasdroid98.app3_casas.ui.theme.App3_CasasTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,19 +22,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            App3_CasasTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            CasasApp()
         }
     }
 }
 
-@Composable
+@Composable()
+fun CasasApp(){
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "inicio"){
+        composable("inicio"){ PantallaInicio(navController) }
+    }
+}
+
+/* @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
@@ -42,6 +47,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     App3_CasasTheme {
-        Greeting("Android")
+        Greeting("Hola Sebas")
     }
-}
+} */
